@@ -1,27 +1,28 @@
 const express = require("express");
-const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const Router = require("./routers");
-dotenv.config({ path: "./config.env" });
+
 const app = express();
 
-const dbURI = process.env.DATABASE;
-const port = process.env.PORT || 5000;
+// Define your MongoDB connection URI directly here
+const dbURI = "mongodb+srv://baswameenakshi:1234@cluster0.bn7hunf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const port = process.env.PORT || 3000;
 
 app.use(express.static("public"));
 app.use(express.json());
 app.use(cookieParser());
 app.use(Router);
+
 mongoose
   .connect(dbURI)
-  .then((result) => {
+  .then(() => {
     app.listen(port);
-    console.log("connected to mongodb and listening at port 5000");
+    console.log("Connected to MongoDB and listening at port", port);
   })
-  .catch((err) => console.error(err));
+  .catch((err) => console.error("Error connecting to MongoDB:", err));
 
-if (process.env.NODE_ENV == "production") {
+if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
   const path = require("path");
   app.get("*", function (req, res) {
